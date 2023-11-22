@@ -1,42 +1,42 @@
-# Plataforma Fiware para la monitorización web
+# Monitorización Web haciendo uso de Fiware
 
 ## Sobre el proyecto
 
-Este es un proyecto de formación que trata de implementar los conocimientos adquiridos de la plataforma Fiware.
-
-En concreto, se implementa una plataforma de monitorización de web haciendo uso de una serie de servicios que desempeñan las labores de recolección, persistencia y tratamiento de los datos que generan una serie de sensores virtuales HTTP.
+Este es un proyecto de formación que trata de implementar los conocimientos adquiridos de la plataforma Fiware, implementando una aplicación de monitorización web haciendo uso de una serie de servicios que desempeñan las labores de recolección, persistencia y tratamiento de los datos que generan una serie de sensores.
 
 ## Arquitectura
 
 Este proyecto consta de los siguientes servicios:
 
-- Orion CB (fiware-orion)
-- IoT Agent JSON (fiware-agent)
-- MongoDB (fiware-mongodb)
-- Cygnus (fiware-cygnus)
-- MariaDB (fiware-mariadb)
-- PhpMyAdmin (fiware-phpmyadmin)
-- Grafana (fiware-grafana)
-- Monitor (fiware-monitor)
-- Front (fiware-front)
+- Orion CB (orion)
+- IoT Agent JSON (iot-agent)
+- MongoDB (mongodb)
+- Cygnus (cygnus)
+- MariaDB (mariadb)
+- PhpMyAdmin (phpmyadmin)
+- Grafana (grafana)
+- App (app)
+- Proxy (proxy)
 
 ## Instrucciones
 
-Para hacer uso del entorno de desarrollo:
+Para hacer uso del entorno de desarrollo `docker-compose.dev.yml` se ha desarrollado un pequeño archivo Makefile con atajos para el uso del entorno. A continuación se definen los comandos disponibles:
+
+- `make ps` equivale a `docker-compose ps`
+- `make up` equivale a `docker-compose up`
+- `make down` equivale a `docker-compose down`
+- `make restart` equivale a `docker-compose restart`
+- `make composer` equivale a `docker-compose exec app composer ...`
+- `make require` equivale a `docker-compose exec app composer require ...`
+- `make console` equivale a `docker-compose exec app php bin/console ...`
+- `make create` equivale a `docker-compose exec app php bin/console make:...`
+
+Para levantar el entorno de desarrollo, una vez clonado el proyecto:
 
 - Generar el `.env` a partir del `dist.env`.
-- Lanzar el comando `docker-compose up -d` para levantar el entorno.
+- Lanzar el comando `make up` para levantar el entorno.
+- Al acceder a `http://localhost` podrá ver la interfaz de la app.
 
 ## Mapa de puertos
 
-## Acceso a interfaces
-
-- Front (http://localhost)
-- Grafana (http://localhost:3000)
-- PhpMyAdmin (http://localhost:8000)
-
-## Acceso a APIs
-
-- Orion CB (http://localhost:1026/)
-- IoT Agent (http://localhost:4041)
-- Cygnus (http://localhost:5080)
+En el archivo `dist.env` están definidos todos los puertos por defecto que utiliza cada servicio. En el caso de utilizar el proyecto `docker-compose.dev.yml`, todos los servicios son accesibles desde el exterior mediante la url `http://localhost:PORT`, mientras que si se utiliza el proyecto destinado a producción `docker-compose.prod.yml` solamente se podrá acceder al puerto 80 mediante el proxy.
