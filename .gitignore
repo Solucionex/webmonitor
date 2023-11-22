@@ -1,0 +1,10 @@
+# Generado por el SO
+.DS_Store
+
+# Editores de código
+.vscode
+.idea
+.fleet
+
+# Variables de entorno
+.env
