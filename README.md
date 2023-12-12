@@ -26,10 +26,13 @@ Para hacer uso del entorno de desarrollo `docker-compose.dev.yml` se ha desarrol
 - `make up` equivale a `docker-compose up`
 - `make down` equivale a `docker-compose down`
 - `make restart` equivale a `docker-compose restart`
-- `make composer` equivale a `docker-compose exec app composer ...`
-- `make require` equivale a `docker-compose exec app composer require ...`
-- `make console` equivale a `docker-compose exec app php bin/console ...`
-- `make create` equivale a `docker-compose exec app php bin/console make:...`
+- `make ssh [servicio]` equivale a `docker-compose exec [servicio] bash`
+- `make logs [servicio]` equivale a `docker-compose logs [servicio] bash`
+- `make docker [comando]` equivale a `docker-compose [comando]`
+- `make composer [comando]` equivale a `docker-compose exec app composer [comando]`
+- `make require [paquete]` equivale a `docker-compose exec app composer require [paquete]`
+- `make console [comando]` equivale a `docker-compose exec app php bin/console [comando]`
+- `make create [comando]` equivale a `docker-compose exec app php bin/console make:[comando]`
 
 Para levantar el entorno de desarrollo, una vez clonado el proyecto:
 

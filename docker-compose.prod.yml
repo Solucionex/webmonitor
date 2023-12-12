@@ -1,0 +1,120 @@
+version: '3.8'
+
+volumes:
+  mongodb:
+  mariadb:
+  grafana:
+
+services:
+  proxy:
+    container_name: ${COMPOSE_PROJECT_NAME}-proxy
+    image: ubuntu/apache2
+    volumes:
+      - .docker/proxy.conf:/etc/apache2/sites-available/000-default.conf
+    ports:
+      - ${PROXY_PORT}:${PROXY_PORT}
+
+  app:
+    container_name: fiware-app
+    build:
+      context: ./
+      dockerfile: .docker/Dockerfile
+    working_dir: /var/www/html
+    volumes:
+      - ./app:/var/www/html:cached
+      - ./.docker/app.conf:/etc/apache2/sites-available/000-default.conf
+
+  orion:
+    container_name: fiware-orion
+    image: fiware/orion:${ORION_VERSION}
+    depends_on:
+      - mongodb
+    ports:
+      - ${ORION_PORT}:${ORION_PORT}
+    command: -dbhost mongodb
+    healthcheck:
+      test: curl --fail -s http://orion:${ORION_PORT}/version || exit 1
+      interval: 5s
+  
+  iot-agent:
+    container_name: fiware-agent
+    image: fiware/iotagent-json:${IOTA_VERSION}
+    depends_on:
+      - mongodb
+    ports:
+      - "${IOTA_NORTH_PORT}:${IOTA_NORTH_PORT}"
+      - "${IOTA_SOUTH_PORT}:${IOTA_SOUTH_PORT}"
+    environment:
+      - IOTA_DEFAULT_TRANSPORT=HTTP
+      - IOTA_CB_HOST=orion
+      - IOTA_CB_PORT=${ORION_PORT}
+      - IOTA_NORTH_PORT=${IOTA_NORTH_PORT}
+      - IOTA_REGISTRY_TYPE=mongodb
+      - IOTA_TIMESTAMP=true
+      - IOTA_MONGO_HOST=mongodb
+      - IOTA_MONGO_PORT=${MONGODB_PORT}
+      - IOTA_MONGO_DB=iotagentjson
+      - IOTA_HTTP_PORT=${IOTA_SOUTH_PORT}
+      - IOTA_PROVIDER_URL=http://iot-agent:${IOTA_NORTH_PORT}
+      - IOTA_DEFAULT_RESOURCE=/iot/json
+      - IOTA_CB_NGSI_VERSION=v2
+
+  cygnus:
+    container_name: fiware-cygnus
+    image: fiware/cygnus-ngsi
+    depends_on:
+      - mariadb
+    volumes:
+      - .docker/cygnus.conf:/opt/apache-flume/conf/agent.conf
+    ports:
+      - ${CYGNUS_SERVICE_PORT}:${CYGNUS_SERVICE_PORT}
+      - ${CYGNUS_API_PORT}:${CYGNUS_API_PORT}
+    environment:
+      - CYGNUS_MONGO_HOSTS=mongodb:${MONGODB_PORT}
+      - CYGNUS_MONGO_SERVICE_PORT=${CYGNUS_SERVICE_PORT}
+      - CYGNUS_LOG_LEVEL=DEBUG
+      - CYGNUS_SERVICE_PORT=${CYGNUS_SERVICE_PORT}
+      - CYGNUS_API_PORT=${CYGNUS_API_PORT}
+
+  mariadb:
+    container_name: fiware-mariadb
+    image: mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+    volumes:
+      - mariadb:/var/lib/mysql
+
+  grafana:
+    container_name: fiware-grafana
+    image: grafana/grafana
+    ports:
+      - ${GRAFANA_PORT}:${GRAFANA_PORT}
+    depends_on:
+      - mariadb
+    volumes:
+      - grafana:/var/lib/grafana
+
+  mongodb:
+    container_name: fiware-mongodb
+    image: mongo:${MONGODB_VERSION}
+    volumes:
+      - mongodb:/data
+  
+  phpmyadmin:
+    container_name: fiware-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - ${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}
+    depends_on:
+      - mariadb
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_USER=${MARIADB_USER}
+      - PMA_PASSWORD=${MARIADB_PASSWORD}
+      - APACHE_PORT=${PHPMYADMIN_PORT}
+      - MEMORY_LIMIT=512M
+      - UPLOAD_LIMIT=2M
+      - HIDE_PHP_VERSION=true
+    
