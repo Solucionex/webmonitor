@@ -8,3 +8,4 @@
 
 # Variables de entorno
 .env
+!app/.env
