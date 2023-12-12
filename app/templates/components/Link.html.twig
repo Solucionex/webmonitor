@@ -1,0 +1,15 @@
+<a
+	{% if type == "default" %} class="bg-transparent border border-gray-500 text-gray-500 hover:border-gray-400 hover:text-gray-400 flex items-center gap-2 p-2 uppercase font-bold text-sm" {% endif %}
+	{% if type == "primary" %} class="bg-blue-950 hover:bg-blue-900 text-white flex items-center gap-2 p-2 uppercase font-bold text-sm" {% endif %}
+	{% if type == "secondary" %} class="bg-yellow-600 hover:bg-yellow-500 text-white flex items-center gap-2 p-2 uppercase font-bold text-sm" {% endif %}
+	{% if type == "alert" %} class="bg-red-600 hover:bg-red-500 text-white flex items-center gap-2 p-2 uppercase font-bold text-sm" {% endif %}
+href="{{href}}"
+	{% if target %}
+		target="{{target}}"
+	{% endif %}
+	>
+	{% if icon %}
+		<i class="{{ icon }}"></i>
+	{% endif %}
+	{{ title }}
+</a>

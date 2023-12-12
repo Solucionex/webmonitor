@@ -1,0 +1,15 @@
+{% extends 'layout/base.html.twig' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block main %}
+	<twig:Section id="containers" title="Contenedores">
+		{% block content %}
+			<ul class="list-none flex flex-wrap gap-2 py-2">
+				{% for container,status in containers %}
+					<li class="p-2 text-sm font-semibold uppercase text-center {{status ? 'bg-green-300 text-green-800' : 'bg-red-300 text-red-800'}}">{{container}}</li>
+				{% endfor %}
+			</ul>
+		{% endblock %}
+	</twig:Section>
+{% endblock %}

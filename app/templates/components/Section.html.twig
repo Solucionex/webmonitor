@@ -1,0 +1,10 @@
+<section id="{{ id }}" class="bg-white shadow-sm p-4 flex-auto {{full ? 'w-full' : ''}}">
+	<div class="flex justify-between items-center py-2">
+		<h2 class="text-lg text-blue-900 font-bold">{{ title }}</h2>
+		<div class="flex flex-end gap-2">
+		{% block actions %}{% endblock %}
+		</div>
+	</div>
+	<hr class="my-2">
+	{% block content %}{% endblock %}
+</section>
