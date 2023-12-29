@@ -3,13 +3,14 @@
 {% block title %}Settings{% endblock %}
 
 {% block main %}
-	<twig:Section id="containers" title="Contenedores">
+	<twig:Section id="user-settings" title="User Settings" full>
 		{% block content %}
-			<ul class="list-none flex flex-wrap gap-2 py-2">
-				{% for container,status in containers %}
-					<li class="p-2 text-sm font-semibold uppercase text-center {{status ? 'bg-green-300 text-green-800' : 'bg-red-300 text-red-800'}}">{{container}}</li>
-				{% endfor %}
-			</ul>
+			{{ form(userForm) }}
+		{% endblock %}
+	</twig:Section>
+	<twig:Section id="alerts-settings" title="Alerts Settings" full>
+		{% block content %}
+			{{ form(alertForm) }}
 		{% endblock %}
 	</twig:Section>
 {% endblock %}

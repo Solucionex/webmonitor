@@ -4,7 +4,6 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
                 class: App\Entity\User
@@ -22,8 +21,6 @@ security:
                 enable_csrf: true
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -38,7 +35,6 @@ security:
         - { path: ^/endpoint/notification, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: [IS_AUTHENTICATED_FULLY,ROLE_USER] }
         - { path: ^/fiware, roles: [IS_AUTHENTICATED_FULLY, ROLE_ADMIN] }
-    
     role_hierarchy:
         ROLE_ADMIN: [ROLE_USER]
 

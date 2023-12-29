@@ -34,6 +34,7 @@ class CreateUserCommand extends Command
         $this->addArgument('username', InputArgument::REQUIRED, 'The username of the new user');
         $this->addArgument('password', InputArgument::OPTIONAL, 'The plain password of the new user');
         $this->addArgument('role', InputArgument::OPTIONAL, 'The role of the new user');
+        $this->addArgument('email', InputArgument::OPTIONAL, 'The email of the new user');
         ;
     }
 
@@ -47,6 +48,12 @@ class CreateUserCommand extends Command
             throw new RuntimeException(sprintf("An user with '$username' username already exists."));
         }
 
+        $email = $input->getArgument('email');
+
+        if($this->userRepository->findOneBy(['email' => $email])){
+            throw new RuntimeException(sprintf("An user with '$email' email address already exists."));
+        }
+
         $role = $input->getArgument('role');
 
         $plainPassword = $input->getArgument('password');
@@ -58,6 +65,7 @@ class CreateUserCommand extends Command
         $user = new User();
         $user->setUsername($username);
         $user->setRoles($role == 'admin' ? ['ROLE_ADMIN'] : ['ROLE_USER']);
+        $user->setEmail($email);
 
         $hashedPassword = $this->passwordHasher->hashPassword($user,$plainPassword);
         $user->setPassword($hashedPassword);

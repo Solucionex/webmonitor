@@ -5,6 +5,7 @@ namespace App\Controller;
 use DateTime;
 use DateTimeZone;
 use Symfony\Component\Mime\Email;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class NotificationController extends AbstractController
 {
     public function __construct(
-        private readonly MailerInterface $mailer
+        private readonly MailerInterface $mailer,
+        private readonly Security $security
     )
     {
         
@@ -26,10 +28,11 @@ class NotificationController extends AbstractController
         $sensor = $data['data'][0]['id'];
         $status = $data['data'][0]['status']['value'];
         $date = (new DateTime($data['data'][0]['status']['metadata']['TimeInstant']['value'], new DateTimeZone('Europe/Madrid')))->format('Y-m-d H:i:s');
-        if($status == 0){
+        $target = $this->security->getUser()->getEmail();
+        if($status == 0 && $target != null){
             $email = (new Email())
                 ->from('no-reply@webmonitor.solucionex.dev') 
-                ->to('manuel.aguilar@gmail.com') // Cambiar por el correo electrónico del currentUser
+                ->to($target)
                 ->subject('[WebMonitor] Host is down!')
                 ->text("$sensor is down since $date");
             $this->mailer->send($email);

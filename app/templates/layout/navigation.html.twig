@@ -1,17 +1,11 @@
 {% if is_granted('ROLE_USER') %}
     <nav class="list-none flex justify-end items-center flex-auto gap-2">
         {% if is_granted('ROLE_ADMIN') %}
-            <li>
-                <twig:Link title="Monitor" icon="bi bi-eye" href="{{path('app_main_index')}}"/>
-            </li>
-            <li>
+            {#<li>
                 <twig:Link title="Grafana" icon="bi bi-pie-chart-fill" href="http://localhost:3000" target="_blank"/>
-            </li>
+            </li>#}
             <li>
-                <twig:Link title="Fiware" icon="bi bi-boxes" href="{{path('app_fiware_index')}}"/>
-            </li>
-            <li>
-                <twig:Link title="Settings" icon="bi bi-gear-fill" href="{{path('app_settings')}}"/>
+                <twig:Link title="Settings" icon="bi bi-gear-fill" href="{{path('app_settings_index')}}"/>
             </li>
         {% endif %}
         <li>

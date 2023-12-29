@@ -13,7 +13,7 @@ class NetworkService
 
         if (!$fp) {
             // No se pudo establecer conexión
-            $httpStatus = Response::HTTP_BAD_REQUEST;
+            $httpStatus = Response::HTTP_SERVICE_UNAVAILABLE;
         } else {
             // Conexión exitosa
             $httpStatus = Response::HTTP_OK;

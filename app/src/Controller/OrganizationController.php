@@ -32,10 +32,12 @@ class OrganizationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $username = $this->security->getUser()->getUserIdentifier();
             $name = $data['name'];
             $description = $data['description'];
             $apikey = ($this->uuidFactory->create())->toBase32();
+
+            $service = $this->security->getUser()->getUserIdentifier();
+            $servicePath = '/'.strtolower($name);
 
             $services = [
                 'services' => [
@@ -66,9 +68,21 @@ class OrganizationController extends AbstractController
                 ]
             ];
 
-            $response = $this->ioTAgentService->createService($services, $username);
+            $response = $this->ioTAgentService->createService($services, $service, $servicePath);
+            $cygnus = $this->contextBrokerService->createSubscription(
+                "Cygnus subscription for $name",
+                "http://cygnus:5050/notify",
+                $service,
+                $servicePath
+            );
+            $alert = $this->contextBrokerService->createSubscription(
+                "Alerts subscription for $name",
+                "http://app/endpoint/notification",
+                $service,
+                $servicePath
+            );
 
-            if ($response->getStatusCode() == '200') {
+            if ($response->getStatusCode() == '200' && $cygnus->getStatusCode() == '201' && $alert->getStatusCode() == '201') {
                 $this->addFlash(
                     'success',
                     "The organization has been successfully created"
@@ -77,18 +91,44 @@ class OrganizationController extends AbstractController
                 $message = $response->getContent();
                 $this->addFlash(
                     'error',
-                    "An error was detected during the process: ($message)"
+                    "An error was detected during the process"
                 );
             }
         }
+
 
         return $this->redirectToRoute('app_main_index');
     }
 
     #[Route('/organization/delete', name: 'app_organization_delete')]
-    public function delete(#[MapQueryParameter] string $r, #[MapQueryParameter] string $k): Response
+    public function delete(
+        #[MapQueryParameter] string $resource,
+        #[MapQueryParameter] string $key,
+        #[MapQueryParameter] string $name
+    ): Response
     {
-        $response = $this->ioTAgentService->deleteService($r, $k, $this->security->getUser()->getUserIdentifier());
+        $service = $this->security->getUser()->getUserIdentifier();
+        $servicePath = '/'.strtolower($name);
+
+        // Delete all devices and entities related to the service (organization)
+        $response = json_decode($this->ioTAgentService->getDevices($service, $servicePath), true);
+        if($response['devices']){
+            foreach ($response['devices'] as $device){
+                $this->contextBrokerService->deleteEntity($device['entity_name'], $service, $servicePath);
+                $this->ioTAgentService->deleteDevice($device['device_id'], $service, $servicePath);
+            }
+        }
+
+        // Delete all subscriptions related to the service (organization)
+        $response = $this->contextBrokerService->getSubscriptions($service,$servicePath);
+        if(json_decode($response->getContent(),true)){
+            foreach (json_decode($response->getContent(), true) as $subscription){
+                $this->contextBrokerService->deleteSubscription($subscription['id'], $service, $servicePath);
+            }
+        }
+
+        // Delete the service (organization) itself
+        $response = $this->ioTAgentService->deleteService($resource, $key, $service, $servicePath);
 
         if ($response->getStatusCode() == '200') {
             $this->addFlash(
@@ -99,7 +139,7 @@ class OrganizationController extends AbstractController
             $message = $response->getContent();
             $this->addFlash(
                 'error',
-                "An error was detected during the process: ($message)"
+                "An error was detected during the process"
             );
         }
         return $this->redirectToRoute('app_main_index');

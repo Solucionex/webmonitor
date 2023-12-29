@@ -24,7 +24,7 @@ class WebsiteFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $organizations = [];
-        $services = json_decode($this->ioTAgentService->getServices($this->security->getUser()->getUserIdentifier()),true)['services'];
+        $services = json_decode($this->ioTAgentService->getServices($this->security->getUser()->getUserIdentifier(), '/*'),true)['services'];
         foreach ($services as $key => $service) {
             $name = $service['static_attributes'][0]['value'];
             $apikey = $service['apikey'];

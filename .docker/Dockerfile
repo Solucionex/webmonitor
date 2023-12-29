@@ -21,6 +21,7 @@ RUN apt update -qy && \
     php8.2-mysql \
     libapache2-mod-php8.2 \
     libapache2-mod-fcgid \
+    git \
     supervisor \
     && rm -rf /var/lib/apt
 

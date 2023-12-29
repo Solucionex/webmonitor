@@ -29,7 +29,7 @@
 							<td class="px-4 py-2">{{ organization['static_attributes'][0]['value'] }}</td>
 							<td class="px-4 py-2">{{ organization['static_attributes'][1]['value'] }}</td>
 							<td class="px-4 py-2">
-								<a class="text-red-400" href="{{ path( "app_organization_delete", { 'r' : organization['resource'], 'k' : organization['apikey'], }) }}">Delete</a>
+								<a class="text-red-400" href="{{ path( "app_organization_delete", { 'resource' : organization['resource'], 'key' : organization['apikey'], 'name' : organization['static_attributes'][0]['value'] }) }}">Delete</a>
 							</td>
 						</tr>
 					{% endfor %}
@@ -51,110 +51,80 @@
 				{{ form(organizationForm) }}
 				</dialog>
 			{% endblock %}
-		</twig:Section>
-		<twig:Section id="websites" title="Websites">
-			{% block actions %}
-				{{component('Button',{
-						title: 'New website',
-						type: 'primary',
-						icon: 'bi bi-plus-square-fill',
-						onclick: "document.querySelector('dialog#addWebsiteModal').showModal()"
-					})}}
-			{% endblock %}
-			{% block content %}
-				{% if websites %}
-					<table class="py-2 w-full">
-						<tr class="text-gray-500 uppercase text-xs font-bold">
-							<th class="px-4 py-2">Name</th>
-							<th class="px-4 py-2">Description</th>
-							<th class="px-4 py-2">Organization</th>
-							<th class="px-4 py-2">URL</th>
-							<th class="px-4 py-2">Actions</th>
-						</tr>
-						{% for website in websites %}
-							<tr class="text-gray-500 text-xs text-center">
-								<td class="px-4 py-2">{{website['static_attributes'][0]['value']}}</td>
-								<td class="px-4 py-2">{{website['static_attributes'][1]['value']}}</td>
-								<td class="px-4 py-2">{{website['static_attributes'][3]['value']}}</td>
-								<td class="px-4 py-2">{{website['static_attributes'][2]['value']}}</td>
-								<td class="px-4 py-2">
-									<a class="text-red-400" href="{{ path( "app_website_delete", { 'id' : website['device_id'] }) }}">Delete</a>
-								</td>
-							</tr>
-						{% endfor %}
-					</table>
-				{% else %}
-					<p class="text-center text-sm p-8 text-gray-400">There are no existing websites</p>
-				{% endif %}
-				<dialog id="addWebsiteModal" class="p-4 w-4/12 shadow-xl">
-					<form method="dialog" class="flex flex-col">
-						<button class="flex justify-end items-center gap-2 text-gray-400 hover:text-gray-500 mb-4">
-							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square-fill" viewbox="0 0 16 16">
-								<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm3.354 4.646L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"/>
-							</svg>
-							<span>Close</span>
-						</button>
-					</form>
-					<h2 class="text-lg text-blue-950 font-bold">Create a new website</h2>
-					<hr class="my-4">
-					{{ form(websiteForm) }}
-					</dialog>
-				{% endblock %}
-			</twig:Section>
-			<twig:Section id="alerts" title="Alerts">
-				{% block actions %}
-					{{component('Button',{
-						title: 'Clean',
-						type: 'secondary',
-						icon: 'bi bi-trash',
-					})}}
-				{% endblock %}
-				{% block content %}
-					{% if alerts %}
-						<table class="py-2 w-full">
-							<tr class="text-gray-500 uppercase text-xs font-bold">
-								<th class="px-4 py-2">Website</th>
-								<th class="px-4 py-2">Message</th>
-							</tr>
-							{% for website in websites %}
-								<tr class="text-gray-500 text-xs text-center">
-									<td class="px-4 py-2">Example.org</td>
-									<td class="px-4 py-2">Website was down 50 secongs ago!</td>
-								</tr>
-							{% endfor %}
-						</table>
-					{% else %}
-						<p class="text-center text-sm p-8 text-gray-400">There are no existing alerts</p>
-					{% endif %}
-				{% endblock %}
-			</twig:Section>
-			<twig:Section id="graphs" title="Graphs" full>
-				{% block content %}
-					{% component Graph with {id: "historical"} %}
-						{% block javascripts %}
-							<script>
-								console.log("HOLA")
-								const ctx = document.getElementById('historical');
-
-								new Chart(ctx, {
-									type: 'bar',
-									data: {
-										labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-										datasets: [{
-											label: '# of Votes',
-											data: [12, 19, 3, 5, 2, 3],
-											borderWidth: 1
-										}]
-									},
-								});
-							</script>
-						{% endblock %}
-					{% endcomponent %}
-				{% endblock %}
-			</twig:Section>
-			<twig:Section id="grafana" title="Grafana" full>
-				{% block content %}
-					<iframe class="w-full h-full" src="http://localhost:3000/d-solo/abbdf436-2c07-4737-a1e6-682c9d6d2f61/website001?orgId=1&refresh=5s&from=1701407257899&to=1701428857899&theme=light&panelId=7" frameborder="0"></iframe>
-				{% endblock %}
-			</twig:Section>
+	</twig:Section>
+	<twig:Section id="websites" title="Websites">
+		{% block actions %}
+			{{component('Link',{
+				title: 'Update status',
+				type: 'primary',
+				icon: 'bi bi-arrow-clockwise',
+				href: '/website/update'
+			})}}
+			{{component('Button',{
+					title: 'New website',
+					type: 'primary',
+					icon: 'bi bi-plus-square-fill',
+					onclick: "document.querySelector('dialog#addWebsiteModal').showModal()"
+				})}}
 		{% endblock %}
+		{% block content %}
+			{% if websites %}
+				<table class="py-2 w-full">
+					<tr class="text-gray-500 uppercase text-xs font-bold">
+						<th class="px-4 py-2">Name</th>
+						<th class="px-4 py-2">Description</th>
+						<th class="px-4 py-2">Organization</th>
+						<th class="px-4 py-2">URL</th>
+						<th class="px-4 py-2">Status</th>
+						<th class="px-4 py-2">Actions</th>
+					</tr>
+					{% for website in websites %}
+						<tr class="text-gray-500 text-xs text-center">
+							<td class="px-4 py-2">{{website['static_attributes'][0]['value']}}</td>
+							<td class="px-4 py-2">{{website['static_attributes'][1]['value']}}</td>
+							<td class="px-4 py-2">{{website['static_attributes'][3]['value']}}</td>
+							<td class="px-4 py-2"><a href="{{website['static_attributes'][2]['value']}}">{{website['static_attributes'][2]['value']}}</a></td>
+							<td class="px-4 py-2">
+								{% if website['current_status'] is defined %}
+									{% if website['current_status'] %}
+										<i title="Website is up" class="bi bi-circle-fill text-green-500"></i>
+									{% else %}
+										<i title="Website is down" class="bi bi-circle-fill text-red-500"></i>
+									{% endif %}
+								{% else %}
+									<i title="Unknown status" class="bi bi-circle-fill text-gray-400"></i>
+								{% endif %}
+							</td>
+							<td class="px-4 py-2 flex justify-center gap-4">
+								{#  <a class="text-green-600" href="{{ path( "app_website_update", { 'id' : website['device_id'] }) }}">Check</a>#}
+								<a class="text-red-400" href="{{ path( "app_website_delete", { 'id': website['device_id'], 'service': website['service'], 'service_path': website['service_path'] }) }}">Delete</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</table>
+			{% else %}
+				<p class="text-center text-sm p-8 text-gray-400">There are no existing websites</p>
+			{% endif %}
+			<dialog id="addWebsiteModal" class="p-4 w-4/12 shadow-xl">
+				<form method="dialog" class="flex flex-col">
+					<button class="flex justify-end items-center gap-2 text-gray-400 hover:text-gray-500 mb-4">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square-fill" viewbox="0 0 16 16">
+							<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm3.354 4.646L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"/>
+						</svg>
+						<span>Close</span>
+					</button>
+				</form>
+				<h2 class="text-lg text-blue-950 font-bold">Create a new website</h2>
+				<hr class="my-4">
+				{{ form(websiteForm) }}
+				</dialog>
+				{% endblock %}
+			</twig:Section>
+			{% if historyChart is not null %}
+				<twig:Section id="history" title="Data History" full>
+					{% block content %}
+							{{ render_chart(historyChart, {'height': '50'}) }}
+					{% endblock %}
+				</twig:Section>
+			{% endif %}
+	{% endblock %}

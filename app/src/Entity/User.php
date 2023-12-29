@@ -30,6 +30,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
+    #[ORM\Column]
+    private ?bool $alertsStatus = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -111,4 +114,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getAlertsStatus(): ?bool
+    {
+        return $this->alertsStatus;
+    }
+
+    public function setAlertsStatus(bool $alertsStatus): static
+    {
+        $this->alertsStatus = $alertsStatus;
+
+        return $this;
+    }
+
+
 }

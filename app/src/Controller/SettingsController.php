@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Form\AlertFormType;
+use App\Form\UserFormType;
 use App\Service\NetworkService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,29 +17,21 @@ class SettingsController extends AbstractController
     {
     }
 
-    #[Route('/docker', name: 'app_docker')]
-    public function docker(): Response
-    {
-        $containers = [
-            'web app' => $this->networkService->ping('app','80')->getStatusCode() == 200 ? true : false,
-            'iot agent' => $this->networkService->ping('iot-agent','7896')->getStatusCode() == 200 ? true : false,
-            'context broker' => $this->networkService->ping('orion','1026')->getStatusCode() == 200 ? true : false,
-            'mongodb' => $this->networkService->ping('mongodb','27017')->getStatusCode() == 200 ? true : false,
-            'cygnus' => $this->networkService->ping('cygnus','5080')->getStatusCode() == 200 ? true : false,
-            'mariadb' => $this->networkService->ping('mariadb','3306')->getStatusCode() == 200 ? true : false,
-            'phpmyadmin' => $this->networkService->ping('phpmyadmin','80')->getStatusCode() == 200 ? true : false,
-            'grafana' => $this->networkService->ping('grafana','3000')->getStatusCode() == 200 ? true : false,
-            'sensores' => $this->networkService->ping('sensors','5000')->getStatusCode() == 200 ? true : false,
-        ];
-
-        return $this->render('settings/index.html.twig', [
-            'containers' => $containers,
-        ]);
-    }
-
-    #[Route('/settings', name: 'app_settings')]
+    #[Route('/settings', name: 'app_settings_index')]
     public function index(): Response
     {
-        return $this->render('settings/index.html.twig', []);
+
+        $userForm = $this->createForm(UserFormType::class, null, [
+            'action' => $this->generateUrl('app_user_update'),
+        ]);
+
+        $alertForm = $this->createForm(AlertFormType::class, null, [
+            'action' => $this->generateUrl('app_alert_update')
+        ]);
+
+        return $this->render('settings/index.html.twig', [
+            'userForm' => $userForm,
+            'alertForm' => $alertForm
+        ]);
     }
 }

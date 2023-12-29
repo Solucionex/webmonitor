@@ -4,19 +4,25 @@ namespace App\Controller;
 
 use App\Form\WebsiteFormType;
 use App\Service\IoTAgentService;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class WebsiteController extends AbstractController
 {
     public function __construct(
         private readonly IoTAgentService $ioTAgentService,
-        private readonly Security $security
+        private readonly Security $security,
+        private readonly SluggerInterface $slugger,
+        private readonly KernelInterface $kernel
     ) {
     }
 
@@ -29,16 +35,18 @@ class WebsiteController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $devicesCounter = 1 + (int) json_decode($this->ioTAgentService->getServices($this->security->getUser()->getUserIdentifier()), true)['count'];
+            $counter = (int) json_decode($this->ioTAgentService->getDevices($this->security->getUser()->getUserIdentifier(), '/'.strtolower($data['organization'])), true)['count'];
 
             $username = $this->security->getUser()->getUserIdentifier();
+
+            $newDeviceCounter = $counter +1;
 
             $devices = [
                 'devices' => [
                     [
-                        'device_id' => 'sensor' . $devicesCounter,
-                        'entity_name' => 'urn:ngsi-ld:Sensor:Sensor' . $devicesCounter,
-                        'entity_type' => 'Sensor',
+                        'device_id' => str_replace('-','_',strtolower($this->slugger->slug($data['name']))),
+                        'entity_name' => 'urn:ngsi-ld:Website:' . $data['name'],
+                        'entity_type' => 'Website',
                         'timezone' => 'Europe/Madrid',
                         'attributes' => [
                             [
@@ -71,24 +79,19 @@ class WebsiteController extends AbstractController
                             [
                                 'name' => 'refDevice',
                                 'type' => 'Relationship',
-                                'value' => 'urn:ngsi-ld:Sensor:Sensor' . $devicesCounter
-                            ],
-                            [
-                                'name' => 'refWebSite',
-                                'type' => 'Relationship',
-                                'value' => 'urn:ngsi-ld:WebSite:' . preg_replace('/[^a-zA-Z0-9]/', '', $data['name'])
+                                'value' => 'urn:ngsi-ld:Website:' . $data['name']
                             ],
                         ],
                     ]
                 ]
             ];
 
-            $response = $this->ioTAgentService->createDevice($devices, $username);
+            $response = $this->ioTAgentService->createDevice($devices, $username, '/'.strtolower($data['organization']));
 
             if ($response->getStatusCode() == '200') {
                 $this->addFlash(
                     'success',
-                    "The organization has been successfully created"
+                    "The website has been successfully created"
                 );
             } else {
                 $message = $response->getContent();
@@ -103,10 +106,37 @@ class WebsiteController extends AbstractController
     }
 
     #[Route('/website/delete', name: 'app_website_delete')]
-    public function delete(#[MapQueryParameter()] string $id): Response
+    public function delete(
+        #[MapQueryParameter()] string $id,
+        #[MapQueryParameter()] string $service,
+        #[MapQueryParameter()] string $service_path,
+    ): Response
     {
         $currentUser = $this->security->getUser()->getUserIdentifier();
-        $this->ioTAgentService->deleteDevice($id,$currentUser);
+        $this->ioTAgentService->deleteDevice($id, $service, $service_path);
+        return $this->redirectToRoute('app_main_index');
+    }
+
+    #[Route('/website/update', name: 'app_website_update')]
+    public function update(): Response
+    {
+        $currentUser = $this->security->getUser()->getUserIdentifier();
+
+        $application = new Application($this->kernel);
+        $application->setAutoExit(false);
+
+        $input = new ArrayInput([
+            'command' => 'app:devices:update',
+            'username' => $currentUser
+        ]);
+
+        $application->run($input);
+
+        $this->addFlash(
+            'success',
+            "The websites statuses has been successfully updated"
+        );
+
         return $this->redirectToRoute('app_main_index');
     }
 }
