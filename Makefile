@@ -2,12 +2,7 @@
 
 include .env
 
-DOCKER_COMPOSE := $(shell command -v docker-compose 2> /dev/null)
-ifeq ($(DOCKER_COMPOSE),)
-    DOCKER_COMPOSE := docker compose -f docker-compose.$(ENV).yml
-else
-    DOCKER_COMPOSE := docker-compose -f docker-compose.$(ENV).yml
-endif
+DOCKER_COMPOSE := docker compose -f docker-compose.$(ENV).yml
 
 # docker commands
 ps:

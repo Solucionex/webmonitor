@@ -9,3 +9,6 @@
 # Variables de entorno
 .env
 !app/.env
+
+# Directorios dinámicos
+.letsencrypt
