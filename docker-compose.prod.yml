@@ -6,13 +6,27 @@ volumes:
   grafana:
 
 services:
-  proxy:
-    container_name: ${COMPOSE_PROJECT_NAME}-proxy
-    image: ubuntu/apache2
-    volumes:
-      - .docker/proxy.conf:/etc/apache2/sites-available/000-default.conf
+  traefik:
+    image: traefik:2.10
+    container_name: ${COMPOSE_PROJECT_NAME}-traefik
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=info@solucionex.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
-      - ${PROXY_PORT}:${PROXY_PORT}
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "./.letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Madrid
 
   app:
     container_name: ${COMPOSE_PROJECT_NAME}-app
@@ -24,8 +38,11 @@ services:
       - ./app:/var/www/html:cached
       - ./.docker/app.conf:/etc/apache2/sites-available/000-default.conf
       - ./.docker/symfony_worker.conf:/etc/supervisor/conf.d/symfony_worker.conf
-    ports:
-      - ${APP_PORT}:${APP_PORT}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`fiware.solucionex.dev`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls.certresolver=myresolver"
 
   orion:
     container_name: ${COMPOSE_PROJECT_NAME}-orion
