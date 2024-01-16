@@ -68,7 +68,8 @@ class MainController extends AbstractController
             $sites = [];
 
             foreach ($data as $item){
-                $labels[] = date('d/M H:i', $item['recvTimeTs']);
+                $date = DateTime::createFromFormat('Y-m-d H:i:s.u', $item['recvTime']);
+                $labels[] = $date->format('d/M H:i');
                 $sites[str_replace('urn:ngsi-ld:Website:', '', $item['entityId'])][] = $item['attrValue'];
             }
 
