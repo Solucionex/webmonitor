@@ -4,26 +4,6 @@ volumes:
   grafana:
 
 services:
-  traefik:
-    image: traefik:2.10
-    container_name: ${COMPOSE_PROJECT_NAME}-traefik
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=info@solucionex.com"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-    ports:
-      - "443:443"
-    volumes:
-      - "./.letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    restart: unless-stopped
-    environment:
-      - TZ=Europe/Madrid
-
   app:
     container_name: ${COMPOSE_PROJECT_NAME}-app
     build:
@@ -39,6 +19,9 @@ services:
       - "traefik.http.routers.app.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.routers.app.tls.certresolver=myresolver"
+    networks:
+      - default
+      - traefik
 
   orion:
     container_name: ${COMPOSE_PROJECT_NAME}-orion
@@ -117,3 +100,8 @@ services:
     volumes:
       - mongodb:/data
     
+networks:
+  default:
+  traefik:
+    name: traefik
+    external: true
