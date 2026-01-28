@@ -593,8 +593,9 @@ body {
 }
 
 .footer-logo {
-    height: 32px;
-    width: auto;
+    height: auto;
+    width: 250px;
+    filter: grayscale(1);
 }
 
 .footer-brand p {

@@ -13,20 +13,13 @@
         <nav class="nav">
             <div class="nav-container">
                 <div class="nav-brand">
-                    <img src="assets/fiware-logo.png" alt="FIWARE" class="nav-logo">
+                    <img src="assets/logoslx.png" alt="Solucionex" class="nav-logo">
                     <span class="nav-title">Web Monitor</span>
                 </div>
                 <div class="nav-menu">
                     <a href="#inicio" class="nav-link">Inicio</a>
                     <a href="#arquitectura" class="nav-link">Arquitectura</a>
                     <a href="#instalacion" class="nav-link">Instalación</a>
-                    <a href="#api" class="nav-link">API</a>
-                    <a href="#recursos" class="nav-link">Recursos</a>
-                </div>
-                <div class="nav-toggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
                 </div>
             </div>
         </nav>
@@ -46,7 +39,7 @@
                         <a href="#instalacion" class="btn btn-primary">
                             <i class="fas fa-rocket"></i> Comenzar
                         </a>
-                        <a href="https://github.com/managume/fiware-webmonitor" class="btn btn-secondary">
+                        <a href="https://github.com/solucionex/webmonitor" class="btn btn-secondary">
                             <i class="fab fa-github"></i> Ver en GitHub
                         </a>
                     </div>
@@ -59,41 +52,7 @@
             </div>
         </section>
 
-        <section id="caracteristicas" class="features">
-            <div class="container">
-                <h2 class="section-title">Características Principales</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-microchip"></i>
-                        </div>
-                        <h3>IoT Agent</h3>
-                        <p>Gestión de dispositivos y sensores mediante el protocolo JSON de FIWARE</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <h3>Context Broker</h3>
-                        <p>Orion Context Broker para gestión de información de contexto en tiempo real</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h3>Visualización</h3>
-                        <p>Paneles de monitorización con Grafana para análisis de datos</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-bell"></i>
-                        </div>
-                        <h3>Alertas</h3>
-                        <p>Sistema de notificaciones y alertas personalizables</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+
 
         <section id="arquitectura" class="architecture">
             <div class="container">
@@ -153,8 +112,8 @@
                             <div class="step-content">
                                 <h3>Clonar el Repositorio</h3>
                                 <div class="code-block">
-                                    <pre><code>git clone https://github.com/managume/fiware-webmonitor.git
-cd fiware-webmonitor</code></pre>
+                                    <pre><code>git clone https://github.com/solucionex/webmonitor.git
+cd webmonitor</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -218,95 +177,12 @@ cd fiware-webmonitor</code></pre>
                 </div>
             </div>
         </section>
-
-        <section id="api" class="api-section">
-            <div class="container">
-                <h2 class="section-title">Documentación de la API</h2>
-                <div class="api-content">
-                    <div class="api-endpoints">
-                        <h3>Endpoints Principales</h3>
-                        <div class="endpoint-list">
-                            <div class="endpoint">
-                                <div class="endpoint-method GET">GET</div>
-                                <div class="endpoint-path">/api/websites</div>
-                                <div class="endpoint-description">Listar sitios web monitorizados</div>
-                            </div>
-                            <div class="endpoint">
-                                <div class="endpoint-method POST">POST</div>
-                                <div class="endpoint-path">/api/websites</div>
-                                <div class="endpoint-description">Agregar nuevo sitio web</div>
-                            </div>
-                            <div class="endpoint">
-                                <div class="endpoint-method GET">GET</div>
-                                <div class="endpoint-path">/api/alerts</div>
-                                <div class="endpoint-description">Listar alertas activas</div>
-                            </div>
-                            <div class="endpoint">
-                                <div class="endpoint-method GET">GET</div>
-                                <div class="endpoint-path">/api/devices</div>
-                                <div class="endpoint-description">Listar dispositivos IoT</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="api-fiware">
-                        <h3>Integración con FIWARE</h3>
-                        <p>La aplicación se integra con los servicios FIWARE a través de:</p>
-                        <ul>
-                            <li><strong>Orion Context Broker:</strong> Para gestión de entidades y suscripciones</li>
-                            <li><strong>IoT Agent:</strong> Para transformación de protocolos IoT</li>
-                            <li><strong>Cygnus:</strong> Para persistencia de datos en tiempo real</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="recursos" class="resources">
-            <div class="container">
-                <h2 class="section-title">Recursos y Documentación</h2>
-                <div class="resources-grid">
-                    <div class="resource-card">
-                        <div class="resource-icon">
-                            <i class="fab fa-github"></i>
-                        </div>
-                        <h3>Código Fuente</h3>
-                        <p>Repositorio completo del proyecto</p>
-                        <a href="https://github.com/managume/fiware-webmonitor" class="resource-link">Ver Repositorio</a>
-                    </div>
-                    <div class="resource-card">
-                        <div class="resource-icon">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <h3>Documentación FIWARE</h3>
-                        <p>Guías oficiales de la plataforma FIWARE</p>
-                        <a href="https://fiware-documentation.readthedocs.io/" class="resource-link">Ver Documentación</a>
-                    </div>
-                    <div class="resource-card">
-                        <div class="resource-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <h3>Tutoriales</h3>
-                        <p>Tutoriales y guías de aprendizaje</p>
-                        <a href="https://fiware-tutorials.readthedocs.io/" class="resource-link">Ver Tutoriales</a>
-                    </div>
-                    <div class="resource-card">
-                        <div class="resource-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h3>Comunidad</h3>
-                        <p>Foro y comunidad FIWARE</p>
-                        <a href="https://www.fiware.org/community/" class="resource-link">Unirse a la Comunidad</a>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
-
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <img src="assets/fiware-logo.png" alt="FIWARE" class="footer-logo">
+                    <img src="assets/logoslx.png" alt="Solucionex" class="footer-logo">
                     <p>Plataforma de monitorización web basada en FIWARE</p>
                 </div>
                 <div class="footer-links">
@@ -316,21 +192,13 @@ cd fiware-webmonitor</code></pre>
                             <li><a href="#inicio">Inicio</a></li>
                             <li><a href="#arquitectura">Arquitectura</a></li>
                             <li><a href="#instalacion">Instalación</a></li>
-                            <li><a href="#api">API</a></li>
                         </ul>
                     </div>
-                    <div class="footer-section">
-                        <h4>Recursos</h4>
-                        <ul>
-                            <li><a href="https://github.com/managume/fiware-webmonitor">GitHub</a></li>
-                            <li><a href="https://fiware.org">FIWARE</a></li>
-                            <li><a href="https://fiware-documentation.readthedocs.io/">Documentación</a></li>
-                        </ul>
-                    </div>
+
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 FIWARE Web Monitor. Proyecto de formación.</p>
+                <p>&copy; 2024 Solucionex Web Monitor. Proyecto de formación.</p>
             </div>
         </div>
     </footer>
