@@ -25,6 +25,9 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Add CNAME
+        run: echo "fiware.solucionex.dev" > docs/CNAME
+
       - name: Build documentation
         run: |
           echo "Building documentation site..."
